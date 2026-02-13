@@ -1,23 +1,37 @@
 namespace WordCounter.Application;
 
+using System.Collections.Concurrent;
 using WordCounter.Domain;
 
 public class WordCountOrchestrator
 {
     private readonly IWordTokenizer _tokenizer;
     private readonly IResultAggregator _aggregator;
+    private readonly int _maxDegreeOfParallelism;
 
-    public WordCountOrchestrator(IWordTokenizer tokenizer, IResultAggregator aggregator)
+    public WordCountOrchestrator(
+        IWordTokenizer tokenizer,
+        IResultAggregator aggregator,
+        int maxDegreeOfParallelism = -1)
     {
         _tokenizer = tokenizer;
         _aggregator = aggregator;
+        _maxDegreeOfParallelism = maxDegreeOfParallelism == -1
+            ? Environment.ProcessorCount
+            : maxDegreeOfParallelism;
     }
 
     public Dictionary<string, long> Process(IEnumerable<ITextSource> sources)
     {
-        var allCounts = new List<Dictionary<string, long>>();
+        var sourceList = sources.ToList();
+        var allCounts = new ConcurrentBag<Dictionary<string, long>>();
 
-        foreach (var source in sources)
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = _maxDegreeOfParallelism
+        };
+
+        Parallel.ForEach(sourceList, options, source =>
         {
             var localCounts = new Dictionary<string, long>();
 
@@ -35,7 +49,7 @@ public class WordCountOrchestrator
             }
 
             allCounts.Add(localCounts);
-        }
+        });
 
         return _aggregator.Merge(allCounts);
     }
