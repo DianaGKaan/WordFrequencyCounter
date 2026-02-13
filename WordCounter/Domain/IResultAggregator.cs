@@ -1,4 +1,4 @@
-namespace WordCounter.Abstractions;
+namespace WordCounter.Domain;
 
 public interface IResultAggregator
 {
