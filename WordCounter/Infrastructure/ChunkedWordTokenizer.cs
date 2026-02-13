@@ -36,13 +36,11 @@ public class ChunkedWordTokenizer : IWordTokenizer
             string toProcess;
             if (charsRead < buffer.Length)
             {
-                // Last chunk — process everything
                 toProcess = text;
                 leftover = string.Empty;
             }
             else if (lastWhitespace == -1)
             {
-                // No whitespace found — entire chunk is one partial word
                 leftover = text;
                 continue;
             }
@@ -52,21 +50,49 @@ public class ChunkedWordTokenizer : IWordTokenizer
                 leftover = text.Substring(lastWhitespace + 1);
             }
 
-            var words = toProcess.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var word in words)
+            foreach (var word in ExtractWords(toProcess))
             {
-                yield return word.ToLowerInvariant();
+                yield return word;
             }
         }
 
-        // Handle any remaining leftover
         if (!string.IsNullOrWhiteSpace(leftover))
         {
-            var words = leftover.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var word in words)
+            foreach (var word in ExtractWords(leftover))
             {
-                yield return word.ToLowerInvariant();
+                yield return word;
             }
         }
+    }
+
+    private static IEnumerable<string> ExtractWords(string text)
+    {
+        var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var word in words)
+        {
+            var cleaned = StripPunctuation(word).ToLowerInvariant();
+            if (cleaned.Length > 0)
+            {
+                yield return cleaned;
+            }
+        }
+    }
+
+    private static string StripPunctuation(string word)
+    {
+        int start = 0;
+        int end = word.Length - 1;
+
+        while (start <= end && char.IsPunctuation(word[start]))
+        {
+            start++;
+        }
+
+        while (end >= start && char.IsPunctuation(word[end]))
+        {
+            end--;
+        }
+
+        return start > end ? string.Empty : word.Substring(start, end - start + 1);
     }
 }

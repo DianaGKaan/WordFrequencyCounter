@@ -7,7 +7,7 @@ if (args.Length == 0)
     return;
 }
 
-var tokenizer = new BasicWordTokenizer();
+var tokenizer = new ChunkedWordTokenizer();
 var aggregator = new DictionaryAggregator();
 var orchestrator = new WordCountOrchestrator(tokenizer, aggregator);
 
