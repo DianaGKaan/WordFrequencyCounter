@@ -51,20 +51,20 @@ WordCounter/
 ```mermaid
 graph TB
     subgraph Presentation["Presentation Layer"]
-        Program["Program.cs — Composition Root"]
+        Program["Program.cs - Composition Root"]
     end
 
     subgraph Application["Application Layer"]
-        Orchestrator["WordCountOrchestrator — Coordinates parallel processing"]
+        Orchestrator["WordCountOrchestrator - Coordinates parallel processing"]
     end
 
-    subgraph Domain["Domain Layer — Abstractions"]
+    subgraph Domain["Domain Layer - Abstractions"]
         ITextSource["ITextSource"]
         IWordTokenizer["IWordTokenizer"]
         IResultAggregator["IResultAggregator"]
     end
 
-    subgraph Infrastructure["Infrastructure Layer — Implementations"]
+    subgraph Infrastructure["Infrastructure Layer - Implementations"]
         FileTextSource["FileTextSource"]
         StringTextSource["StringTextSource"]
         ChunkedWordTokenizer["ChunkedWordTokenizer"]
@@ -233,8 +233,8 @@ The tokenizer reads the stream in fixed-size chunks (default 4096 chars) to main
 **Three cases on each chunk read:**
 
 1. **Last chunk** (charsRead < bufferSize): Process everything remaining, including any leftover from previous chunks
-2. **No whitespace found**: The entire chunk is part of one very long word — accumulate it in leftover and continue reading
-3. **Normal case**: Split at the last whitespace position — process everything before it, carry over everything after it as leftover for the next chunk
+2. **No whitespace found**: The entire chunk is part of one very long word - accumulate it in leftover and continue reading
+3. **Normal case**: Split at the last whitespace position - process everything before it, carry over everything after it as leftover for the next chunk
 
 Words are yielded lazily via `yield return`, meaning the consumer processes one word at a time without accumulating them in memory.
 
@@ -266,7 +266,7 @@ All core logic is tested without touching the file system. `StringTextSource` pr
 
 ### SOLID Principles
 
-- **Single Responsibility**: Each class has one job — reading streams, tokenizing, counting, merging, orchestrating
+- **Single Responsibility**: Each class has one job - reading streams, tokenizing, counting, merging, orchestrating
 - **Open/Closed**: New text sources (e.g., HTTP, database) can be added without modifying existing code
 - **Liskov Substitution**: `FileTextSource` and `StringTextSource` are interchangeable wherever `ITextSource` is expected
 - **Interface Segregation**: Each interface defines a single focused contract
