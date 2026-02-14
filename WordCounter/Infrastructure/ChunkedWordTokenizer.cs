@@ -11,6 +11,9 @@ public class ChunkedWordTokenizer : IWordTokenizer
         _bufferSize = bufferSize;
     }
 
+// Note: String allocations per chunk could be reduced using Span<char>.
+// Current approach prioritizes readability per Clean Code requirements.
+// Profiling would be needed to justify the added complexity.
     public IEnumerable<string> Tokenize(Stream stream)
     {
         using var reader = new StreamReader(stream);
@@ -70,7 +73,7 @@ public class ChunkedWordTokenizer : IWordTokenizer
         var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         foreach (var word in words)
         {
-            var cleaned = StripPunctuation(word).ToLowerInvariant();
+            var cleaned = StripPunctuation(word);
             if (cleaned.Length > 0)
             {
                 yield return cleaned;

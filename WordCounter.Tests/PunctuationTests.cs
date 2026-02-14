@@ -107,13 +107,14 @@ public class PunctuationTests
         var result = _tokenizer.Tokenize(stream).ToList();
 
         Assert.Equal(6, result.Count);
-        Assert.Equal("well", result[0]);
-        Assert.Equal("i", result[1]);
+        Assert.Equal("Well", result[0]);
+        Assert.Equal("I", result[1]);
         Assert.Equal("don't", result[2]);
         Assert.Equal("know", result[3]);
         Assert.Equal("maybe", result[4]);
         Assert.Equal("yes", result[5]);
     }
+
 
     [Theory]
     [InlineData("hello,", "hello")]

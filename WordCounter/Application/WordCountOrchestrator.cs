@@ -33,19 +33,15 @@ public class WordCountOrchestrator
 
         Parallel.ForEach(sourceList, options, source =>
         {
-            var localCounts = new Dictionary<string, long>();
+            var localCounts = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
 
             using var stream = source.GetStream();
             foreach (var word in _tokenizer.Tokenize(stream))
             {
-                if (localCounts.ContainsKey(word))
-                {
-                    localCounts[word]++;
-                }
-                else
-                {
+                if (!localCounts.TryGetValue(word, out var count))
                     localCounts[word] = 1;
-                }
+                else
+                    localCounts[word] = count + 1;
             }
 
             allCounts.Add(localCounts);

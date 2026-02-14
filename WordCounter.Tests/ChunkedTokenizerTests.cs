@@ -23,13 +23,16 @@ public class ChunkedTokenizerTests
     }
 
     [Fact]
-    public void Tokenize_MixedCase_ReturnsLowercase()
+    public void Tokenize_MixedCase_ReturnsOriginalCasing()
     {
         var tokenizer = new ChunkedWordTokenizer();
         using var stream = CreateStream("Hello WORLD hElLo");
         var result = tokenizer.Tokenize(stream).ToList();
 
-        Assert.All(result, word => Assert.Equal(word, word.ToLowerInvariant()));
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Hello", result[0]);
+        Assert.Equal("WORLD", result[1]);
+        Assert.Equal("hElLo", result[2]);
     }
 
     [Fact]

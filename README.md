@@ -256,7 +256,7 @@ Parallelism is limited to `Environment.ProcessorCount` to prevent excessive file
 
 ### Word Normalization
 
-Words are converted to lowercase using `ToLowerInvariant()` for case-insensitive counting. Leading and trailing punctuation is stripped (e.g., `"hello,"` becomes `"hello"`), while internal punctuation is preserved (e.g., `"don't"` stays as `"don't"`, `"self-aware"` stays as `"self-aware"`).
+Case-insensitive counting is achieved using `StringComparer.OrdinalIgnoreCase` on all dictionaries, avoiding the cost of creating lowercase string copies for every word. Leading and trailing punctuation is stripped (e.g., `"hello,"` becomes `"hello"`), while internal punctuation is preserved (e.g., `"don't"` stays as `"don't"`, `"self-aware"` stays as `"self-aware"`).
 
 Tokens that consist entirely of punctuation (e.g., `"..."`) are discarded.
 

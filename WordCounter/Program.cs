@@ -37,7 +37,7 @@ try
 
     foreach (var entry in results.OrderByDescending(e => e.Value))
     {
-        Console.WriteLine($"{entry.Key}: {entry.Value}");
+        Console.WriteLine($"{entry.Key.ToLowerInvariant()}: {entry.Value}");
     }
 }
 catch (IOException ex)
